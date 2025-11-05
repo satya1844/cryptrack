@@ -5,51 +5,38 @@ const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
 
 const ws = new WebSocket(process.env.BINANCE_WS || 'wss://stream.binance.com:9443/ws/!ticker@arr');
 
-// ws.on("message", (data) => {
-//   const message = data.toString();
-//   const trade = JSON.parse(message);
-//   console.log(trade);
-//   // Store the trade data in Redis
-//   redis.lpush("binance_trades", JSON.stringify(trade));
-// });
-
-// ws.on("error", (error) => {
-//   console.error("WebSocket error:", error);
-// });
 ws.on("open", () => console.log("Connected to Binance"));
 
 ws.on("message", async (data) => {
   try {
-  const message = data.toString();
-  const tickers = JSON.parse(message);
+    const message = data.toString();
+    const tickers = JSON.parse(message);
 
-  for (const ticker of tickers) {
-    const symbol = ticker.s; // Symbol, e.g., BTCUSDT
-    const price = ticker.c;  // Current price
-    const priceChange = ticker.p; // Price change
+    // Publish the entire batch of tickers at once for the websocket server to process
+    if (tickers.length > 0) {
+      await redis.publish("prices:updates", message);
+    }
 
-    if (!symbol || !price) continue;
+    for (const ticker of tickers) {
+      const symbol = ticker.s; // Symbol, e.g., BTCUSDT
+      const price = ticker.c;  // Current price
 
-    await redis.hset("prices", symbol, JSON.stringify({
-      symbol,
-      price,
-      priceChange,
-      high: ticker.h,
-      low: ticker.l,
-      volume: ticker.v,
-      timestamp: Date.now()
-    }));
+      if (!symbol || !price) continue;
 
-    //publish to subscribers 
-    await redis.publish("prices:updates", JSON.stringify({
-      symbol,
-      price,
-      priceChange,
-    }));
-          console.log(`📊 ${symbol}: $${price} (${priceChange}%)`);
+      // Still save the full data for each coin in the hash
+      await redis.hset("prices", symbol, JSON.stringify({
+        symbol,
+        price,
+        priceChange: ticker.p,
+        high: ticker.h,
+        low: ticker.l,
+        volume: ticker.v,
+        timestamp: Date.now()
+      }));
 
-  }
-  }catch (err) {
+      
+    }
+  } catch (err) {
     console.error("❌ Parse error:", err);
   }
 });

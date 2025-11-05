@@ -10,6 +10,7 @@
     "listener": "tsx services/binance-listener.ts"
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
     "ioredis": "^5.8.2",
     "next": "16.0.0",
     "react": "19.2.0",

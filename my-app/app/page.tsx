@@ -1,17 +1,22 @@
 "use client";
 import { usePrices } from "../components/usePrices";
 import PriceTable from "../components/PriceTable";
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 export default function Home() {
+  const { prices, loading } = usePrices();
 
-const { prices, loading } = usePrices();
-
-return (
-  <div className="p-4">
-      <h1 className="text-xl font-semibold mb-3">Crypto Prices</h1>
-      {loading ? <p>Loading...</p> : <PriceTable prices={prices} />}
-    </div>
+  return (
+    <main className="flex min-h-screen flex-col items-center p-12 bg-gray-900 text-white">
+      <div className="w-full max-w-4xl">
+        <h1 className="text-3xl font-bold text-center mb-6">Real-Time Crypto Tracker</h1>
+        {loading ? (
+          <div className="text-center text-lg">Connecting to real-time price feed...</div>
+        ) : (
+          <PriceTable prices={prices} />
+        )}
+      </div>
+    </main>
   );
 }
 

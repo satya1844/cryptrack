@@ -71,7 +71,7 @@ async function fetchTopCoins() {
     const data = await response.json();
     const coins: CMCCoin[] = data.data;
 
-    console.log(`✅ Fetched ${coins.length} coins from CoinMarketCap`);
+    console.log(` Fetched ${coins.length} coins from CoinMarketCap`);
 
     // Clear the old map
     coinMetadataMap.clear();

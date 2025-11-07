@@ -7,6 +7,10 @@ interface CoinMetadata {
   logo: string;
   marketCap: number;
   rank: number;
+  percentChange1h: number;
+  percentChange24h: number;
+  percentChange7d: number;
+  percentChange30d: number;
 }
 
 // --- WebSocket Server Setup ---
@@ -100,7 +104,11 @@ redisSubscriber.on("message", (channel, message) => {
         rank: metadata.rank,
         marketCap: metadata.marketCap,
         price: coin.c,
-        priceChange: coin.p,
+        priceChange: coin.P, // Uppercase P = percentage change (24h)
+        percentChange1h: metadata.percentChange1h,
+        percentChange24h: metadata.percentChange24h,
+        percentChange7d: metadata.percentChange7d,
+        percentChange30d: metadata.percentChange30d,
         volume: coin.v,
         high: coin.h,
         low: coin.l,

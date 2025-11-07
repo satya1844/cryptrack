@@ -6,8 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "listener": "tsx services/binance-listener.ts"
+    "listener": "tsx services/binance-listener.ts",
+    "websocket": "tsx services/websocket-server.ts",
+    "cmc": "tsx services/coinmarketcap-service.ts",
+    "start:all": "concurrently \"npm run cmc\" \"npm run listener\" \"npm run websocket\" \"npm run dev\" --names \"CMC,Binance,WebSocket,NextJS\" --prefix-colors \"blue,green,yellow,magenta\""
   },
   "dependencies": {
     "dotenv": "^17.2.3",
@@ -23,6 +25,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/ws": "^8.18.1",
+    "concurrently": "^9.2.1",
     "eslint": "^9",
     "eslint-config-next": "16.0.0",
     "tailwindcss": "^4",

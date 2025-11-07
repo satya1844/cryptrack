@@ -2,9 +2,13 @@
 
 import PriceRow from "./PriceRow";
 
-export default function PriceTable({ prices }: { prices: Record<string, any> }) {
-  // The data is now an array of the top 15 coins, already sorted by the server.
-  // We can get the symbols directly from the keys of the prices object.
+interface PriceTableProps {
+  prices: Record<string, any>;
+  onSelectCoin?: (symbol: string) => void;
+}
+
+export default function PriceTable({ prices, onSelectCoin }: PriceTableProps) {
+
   const symbols = Object.keys(prices);
 
   if (symbols.length === 0) {
@@ -12,20 +16,30 @@ export default function PriceTable({ prices }: { prices: Record<string, any> }) 
   }
 
   return (
-    <table className="min-w-full bg-white border text-black border-gray-300">
-      <thead>
-        <tr className="bg-gray-100 text-left">
+    <table className="w-full bg-card border text-secondary-foreground border-border rounded-2xl ">
+      <thead className="rounded-2xl">
+        <tr className="bg-card text-left rounded-2xl">
           <th className="p-2">Rank</th>
           <th className="p-2">Name</th>
           <th className="p-2">Price</th>
-          <th className="p-2">Change (24h)</th>
+          <th className="p-2">1h %</th>
+          <th className="p-2">24h %</th>
+          <th className="p-2">7d %</th>
           <th className="p-2">Volume (24h)</th>
         </tr>
       </thead>
       <tbody>
-        {symbols.map((symbol) => (
-          <PriceRow key={symbol} symbol={symbol} details={prices[symbol]} />
-        ))}
+        {symbols.map((symbol) => {
+          const details = prices[symbol];
+          return (
+            <PriceRow 
+              key={symbol} 
+              symbol={symbol} 
+              details={details} 
+              onClick={() => onSelectCoin?.(symbol)}
+            />
+          );
+        })}
       </tbody>
     </table>
   );

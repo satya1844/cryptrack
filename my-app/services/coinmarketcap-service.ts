@@ -21,7 +21,10 @@ interface CMCCoin {
       price: number;
       market_cap: number;
       volume_24h: number;
+      percent_change_1h: number;
       percent_change_24h: number;
+      percent_change_7d: number;
+      percent_change_30d: number;
     };
   };
 }
@@ -32,6 +35,10 @@ interface CoinMetadata {
   logo: string;
   marketCap: number;
   rank: number;
+  percentChange1h: number;
+  percentChange24h: number;
+  percentChange7d: number;
+  percentChange30d: number;
 }
 
 const CMC_API_KEY = process.env.CMC_API_KEY || '';
@@ -78,6 +85,10 @@ async function fetchTopCoins() {
         logo: `https://s2.coinmarketcap.com/static/img/coins/64x64/${coin.id}.png`,
         marketCap: coin.quote.USD.market_cap,
         rank: i + 1,
+        percentChange1h: coin.quote.USD.percent_change_1h || 0,
+        percentChange24h: coin.quote.USD.percent_change_24h || 0,
+        percentChange7d: coin.quote.USD.percent_change_7d || 0,
+        percentChange30d: coin.quote.USD.percent_change_30d || 0,
       };
 
       // Store by symbol (e.g., "BTC", "ETH")
